@@ -1,0 +1,28 @@
+import os
+from aiogram import types, Bot, Dispatcher, executor
+from random import randint
+
+
+API_KEY =(os.getenv('API_KEY'))
+
+bot = Bot(os.getenv('API_KEY'))
+dp = Dispatcher(bot)
+
+@dp.message_handler(commands='start')
+async def qwerty_r(message:types.Message):
+    await message.answer('Привет, я бот, который умеет определять рандомное число по команде /random')
+
+@dp.message_handler(commands="random")
+async def cmd_random(message:types.Message):
+    keyboard=types.InlineKeyboardMarkup()
+    keyboard.add(types.InlineKeyboardButton(text="Нажми меня",callback_data="random_value"))
+    await message.answer("Нажмите на кнопку,чтобы бот отправил число от 1 до 10", reply_markup=keyboard)
+
+
+@dp.callback_query_handler(text="random_value")
+async def send_random_value(call:types.CallbackQuery):
+    await call.message.answer(str(randint(1,10)))
+
+if __name__ == '__main__':
+    executor.start_polling(dp)
+
